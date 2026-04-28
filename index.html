@@ -1,59 +1,242 @@
-<script>
-  const form = document.getElementById("controls");
-  const urlInput = document.getElementById("url");
-  const openNativeButton = document.getElementById("open-native");
-  const currentUrl = document.getElementById("current-url");
-  const status = document.getElementById("status");
-  const frameWrap = document.getElementById("frame-wrap");
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Site Launcher</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1115;
+        --panel: #181c23;
+        --panel-2: #202632;
+        --line: #313949;
+        --text: #f5f7fb;
+        --muted: #aab4c5;
+        --accent: #62a6ff;
+        --accent-2: #6ce0b3;
+      }
 
-  function normalizeUrl(value) {
-    const trimmed = String(value || "").trim();
-    if (!trimmed) return "https://example.com";
-    // Checks if it already starts with http:// or https://
-    if (/^https?:\/\//i.test(trimmed)) return trimmed;
-    return `https://${trimmed}`;
-  }
+      * { box-sizing: border-box; }
 
-  function setStatus(message) {
-    status.textContent = message;
-  }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(98, 166, 255, 0.16), transparent 24%),
+          radial-gradient(circle at top right, rgba(108, 224, 179, 0.12), transparent 22%),
+          var(--bg);
+        color: var(--text);
+      }
 
-  function setFrame(url) {
-    currentUrl.textContent = url;
-    frameWrap.innerHTML = "";
-    const iframe = document.createElement("iframe");
-    
-    // Concatenating the worker and the normalized URL
-    // Result: https://embedstuff.cxmplate.workers.dev/https://example.com
-    iframe.src = "https://embedstuff.cxmplate.workers.dev/" + url;
-    
-    iframe.referrerPolicy = "no-referrer-when-downgrade";
-    
-    // Optional: add some styles to make sure it fills the container
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
+      body {
+        min-height: 100vh;
+        padding: 24px;
+      }
 
-    iframe.addEventListener("load", () => {
-      setStatus("Embed loaded via proxy.");
-    });
-    
-    iframe.addEventListener("error", () => {
-      setStatus("Error loading the proxy. The worker might be down or the URL is invalid.");
-    });
+      main {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 18px;
+      }
 
-    frameWrap.appendChild(iframe);
-  }
+      .toolbar,
+      .viewport,
+      .notes {
+        background: rgba(24, 28, 35, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const url = normalizeUrl(urlInput.value);
-    setStatus("Trying embed through worker...");
-    setFrame(url);
-  });
+      .toolbar {
+        padding: 18px;
+        display: grid;
+        gap: 14px;
+      }
 
-  openNativeButton.addEventListener("click", () => {
-    const url = normalizeUrl(urlInput.value);
-    window.open(url, "_blank", "noopener,noreferrer");
-    setStatus("Opened in a real browser tab.");
-  });
-</script>
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        line-height: 1;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 10px;
+      }
+
+      input,
+      button {
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        font: inherit;
+      }
+
+      input {
+        background: #10141b;
+        color: var(--text);
+        padding: 0 14px;
+      }
+
+      button {
+        padding: 0 16px;
+        color: var(--text);
+        background: var(--panel-2);
+        cursor: pointer;
+      }
+
+      button.primary {
+        border-color: var(--accent);
+        background: rgba(98, 166, 255, 0.15);
+      }
+
+      button.secondary {
+        border-color: var(--accent-2);
+        background: rgba(108, 224, 179, 0.12);
+      }
+
+      .viewport {
+        overflow: hidden;
+        min-height: 72vh;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .viewport-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .status {
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        min-height: 68vh;
+        border: 0;
+        background: white;
+      }
+
+      .empty {
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: 10px;
+        padding: 48px 24px;
+        color: var(--muted);
+      }
+
+      .notes {
+        padding: 16px 18px;
+        display: grid;
+        gap: 8px;
+      }
+
+      @media (max-width: 860px) {
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="toolbar">
+        <div>
+          <h1>Site Launcher</h1>
+          <p>GitHub Pages-friendly version. Use the proxy to bypass iframe blocks.</p>
+        </div>
+        <form id="controls" class="controls">
+          <input id="url" type="text" inputmode="url" spellcheck="false" value="https://example.com" aria-label="Site URL" />
+          <button class="primary" type="submit">Try Embed</button>
+          <button class="secondary" id="open-native" type="button">Open In Tab</button>
+        </form>
+      </section>
+
+      <section class="viewport">
+        <div class="viewport-bar">
+          <strong id="current-url">No site loaded</strong>
+          <span id="status" class="status">Ready.</span>
+        </div>
+        <div id="frame-wrap" class="empty">
+          <strong>Embed preview</strong>
+          <p>If the preview is blank, the worker proxy may be configured incorrectly.</p>
+        </div>
+      </section>
+
+      <section class="notes">
+        <p>Using Proxy: <code>https://embedstuff.cxmplate.workers.dev/</code></p>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById("controls");
+      const urlInput = document.getElementById("url");
+      const openNativeButton = document.getElementById("open-native");
+      const currentUrl = document.getElementById("current-url");
+      const status = document.getElementById("status");
+      const frameWrap = document.getElementById("frame-wrap");
+
+      function normalizeUrl(value) {
+        const trimmed = String(value || "").trim();
+        if (!trimmed) return "https://example.com";
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        return `https://${trimmed}`;
+      }
+
+      function setStatus(message) {
+        status.textContent = message;
+      }
+
+      function setFrame(url) {
+        currentUrl.textContent = url;
+        frameWrap.innerHTML = "";
+        
+        const iframe = document.createElement("iframe");
+        
+        // This line constructs the proxy URL. 
+        // We use encodeURIComponent so that characters in the target URL don't break the proxy request.
+        iframe.src = "https://embedstuff.cxmplate.workers.dev/?url=" + encodeURIComponent(url);
+        
+        iframe.referrerPolicy = "no-referrer";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+
+        iframe.addEventListener("load", () => {
+          setStatus("Embed request sent to proxy.");
+        });
+
+        frameWrap.appendChild(iframe);
+      }
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const url = normalizeUrl(urlInput.value);
+        setStatus("Loading through proxy...");
+        setFrame(url);
+      });
+
+      openNativeButton.addEventListener("click", () => {
+        const url = normalizeUrl(urlInput.value);
+        window.open(url, "_blank", "noopener,noreferrer");
+        setStatus("Opened in a real browser tab.");
+      });
+    </script>
+  </body>
+</html>
