@@ -213,7 +213,7 @@
         currentUrl.textContent = url;
         frameWrap.innerHTML = "";
         const iframe = document.createElement("iframe");
-        iframe.src = "https://embedstuff.cxmplate.workers.dev/?url=https://"url;
+        iframe.src = "https://embedstuff.cxmplate.workers.dev/?url=https://"+url;
         iframe.referrerPolicy = "no-referrer-when-downgrade";
         iframe.addEventListener("load", () => {
           setStatus("Embed loaded if the site allows framing.");
