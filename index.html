@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<!-- saved from url=(0087)file:///C:/Users/nick/Documents/Codex/2026-04-28/i-want-to-embed-websites-in/index.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Site Launcher</title>
     <style>
       :root {
@@ -167,7 +167,7 @@
           <p>GitHub Pages-friendly version. Open the target in a real browser tab for native textboxes, audio, and video.</p>
         </div>
         <form id="controls" class="controls">
-          <input id="url" type="text" inputmode="url" spellcheck="false" value="https://example.com" aria-label="Site URL">
+          <input id="url" type="text" inputmode="url" spellcheck="false" value="https://example.com" aria-label="Site URL" />
           <button class="primary" type="submit">Try Embed</button>
           <button class="secondary" id="open-native" type="button">Open In Tab</button>
         </form>
@@ -213,7 +213,10 @@
         currentUrl.textContent = url;
         frameWrap.innerHTML = "";
         const iframe = document.createElement("iframe");
-        iframe.src = url;
+        
+        // Correctly prepending the worker URL to the normalized site URL
+        iframe.src = "https://embedstuff.cxmplate.workers.dev/" + url;
+        
         iframe.referrerPolicy = "no-referrer-when-downgrade";
         iframe.addEventListener("load", () => {
           setStatus("Embed loaded if the site allows framing.");
@@ -237,6 +240,5 @@
         setStatus("Opened in a real browser tab.");
       });
     </script>
-  
-
-</body></html>
+  </body>
+</html>
