@@ -1,97 +1,481 @@
 <!doctype html>
+
 <html lang="en">
+
   <head>
+
     <meta charset="utf-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Site Launcher</title>
+
     <style>
+
       :root {
+
         color-scheme: dark;
+
         --bg: #0f1115;
+
         --panel: #181c23;
+
         --panel-2: #202632;
+
         --line: #313949;
+
         --text: #f5f7fb;
+
         --muted: #aab4c5;
+
         --accent: #62a6ff;
+
         --accent-2: #6ce0b3;
+
       }
+
+
+
       * { box-sizing: border-box; }
+
+
+
       html, body {
-        margin: 0; padding: 0; min-height: 100%;
+
+        margin: 0;
+
+        min-height: 100%;
+
         font-family: "Segoe UI", Tahoma, sans-serif;
-        background: radial-gradient(circle at top left, rgba(98,166,255,0.1), transparent 24%), var(--bg);
+
+        background:
+
+          radial-gradient(circle at top left, rgba(98, 166, 255, 0.16), transparent 24%),
+
+          radial-gradient(circle at top right, rgba(108, 224, 179, 0.12), transparent 22%),
+
+          var(--bg);
+
         color: var(--text);
+
       }
-      body { padding: 20px; }
-      main { width: min(1200px, 100%); margin: 0 auto; display: grid; gap: 15px; }
-      .toolbar, .viewport { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-      .toolbar { padding: 20px; display: grid; gap: 15px; }
-      .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; }
-      input { background: #10141b; border: 1px solid var(--line); border-radius: 8px; color: #fff; padding: 12px; font: inherit; }
-      button { padding: 0 20px; height: 48px; border-radius: 8px; border: 1px solid var(--line); cursor: pointer; background: var(--panel-2); color: #fff; }
-      button.primary { border-color: var(--accent); background: rgba(98, 166, 255, 0.1); }
-      .viewport { min-height: 70vh; display: flex; flex-direction: column; overflow: hidden; }
-      .viewport-bar { padding: 10px 15px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 0.9rem; }
-      iframe { flex-grow: 1; border: 0; background: white; width: 100%; height: 100%; }
-      .empty { padding: 40px; text-align: center; color: var(--muted); }
-      @media (max-width: 600px) { .controls { grid-template-columns: 1fr; } }
+
+
+
+      body {
+
+        min-height: 100vh;
+
+        padding: 24px;
+
+      }
+
+
+
+      main {
+
+        width: min(1200px, 100%);
+
+        margin: 0 auto;
+
+        display: grid;
+
+        gap: 18px;
+
+      }
+
+
+
+      .toolbar,
+
+      .viewport,
+
+      .notes {
+
+        background: rgba(24, 28, 35, 0.92);
+
+        border: 1px solid var(--line);
+
+        border-radius: 10px;
+
+      }
+
+
+
+      .toolbar {
+
+        padding: 18px;
+
+        display: grid;
+
+        gap: 14px;
+
+      }
+
+
+
+      h1 {
+
+        margin: 0;
+
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+
+        line-height: 1;
+
+      }
+
+
+
+      p {
+
+        margin: 0;
+
+        color: var(--muted);
+
+      }
+
+
+
+      .controls {
+
+        display: grid;
+
+        grid-template-columns: minmax(0, 1fr) auto auto;
+
+        gap: 10px;
+
+      }
+
+
+
+      input,
+
+      button {
+
+        height: 48px;
+
+        border-radius: 10px;
+
+        border: 1px solid var(--line);
+
+        font: inherit;
+
+      }
+
+
+
+      input {
+
+        background: #10141b;
+
+        color: var(--text);
+
+        padding: 0 14px;
+
+      }
+
+
+
+      button {
+
+        padding: 0 16px;
+
+        color: var(--text);
+
+        background: var(--panel-2);
+
+        cursor: pointer;
+
+      }
+
+
+
+      button.primary {
+
+        border-color: var(--accent);
+
+        background: rgba(98, 166, 255, 0.15);
+
+      }
+
+
+
+      button.secondary {
+
+        border-color: var(--accent-2);
+
+        background: rgba(108, 224, 179, 0.12);
+
+      }
+
+
+
+      .viewport {
+
+        overflow: hidden;
+
+        min-height: 72vh;
+
+        display: grid;
+
+        grid-template-rows: auto minmax(0, 1fr);
+
+      }
+
+
+
+      .viewport-bar {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        padding: 12px 14px;
+
+        border-bottom: 1px solid var(--line);
+
+      }
+
+
+
+      .status {
+
+        font-size: 0.95rem;
+
+        color: var(--muted);
+
+      }
+
+
+
+      iframe {
+
+        width: 100%;
+
+        height: 100%;
+
+        min-height: 68vh;
+
+        border: 0;
+
+        background: white;
+
+      }
+
+
+
+      .empty {
+
+        display: grid;
+
+        place-items: center;
+
+        align-content: center;
+
+        gap: 10px;
+
+        padding: 48px 24px;
+
+        color: var(--muted);
+
+      }
+
+
+
+      .notes {
+
+        padding: 16px 18px;
+
+        display: grid;
+
+        gap: 8px;
+
+      }
+
+
+
+      code {
+
+        font-family: Consolas, monospace;
+
+      }
+
+
+
+      @media (max-width: 860px) {
+
+        .controls {
+
+          grid-template-columns: 1fr;
+
+        }
+
+      }
+
     </style>
+
   </head>
+
   <body>
+
     <main>
+
       <section class="toolbar">
-        <h1>Site Launcher</h1>
+
+        <div>
+
+          <h1>Site Launcher</h1>
+
+          <p>GitHub Pages-friendly version. Open the target in a real browser tab for native textboxes, audio, and video.</p>
+
+        </div>
+
         <form id="controls" class="controls">
-          <input id="url" type="text" placeholder="https://google.com" value="https://example.com" />
-          <button class="primary" type="submit">Embed Site</button>
-          <button id="open-native" type="button">New Tab</button>
+
+          <input id="url" type="text" inputmode="url" spellcheck="false" value="https://example.com" aria-label="Site URL" />
+
+          <button class="primary" type="submit">Try Embed</button>
+
+          <button class="secondary" id="open-native" type="button">Open In Tab</button>
+
         </form>
+
       </section>
+
+
 
       <section class="viewport">
+
         <div class="viewport-bar">
-          <span id="current-url">Ready</span>
-          <span id="status">Idle</span>
+
+          <strong id="current-url">No site loaded</strong>
+
+          <span id="status" class="status">Ready.</span>
+
         </div>
-        <div id="frame-wrap" class="empty">Enter a URL to begin.</div>
+
+        <div id="frame-wrap" class="empty">
+
+          <strong>Embed preview</strong>
+
+          <p>If the site blocks iframes, use <code>Open In Tab</code>. That path gives you the real site with native controls and audio.</p>
+
+        </div>
+
       </section>
+
+
+
+      <section class="notes">
+
+        <p>GitHub Pages can host static files only. It cannot run the old remote-browser server.</p>
+
+        <p>This page works by either trying an iframe preview or opening the real site in a normal browser tab.</p>
+
+      </section>
+
     </main>
 
+
+
     <script>
+
+      const form = document.getElementById("controls");
+
       const urlInput = document.getElementById("url");
+
+      const openNativeButton = document.getElementById("open-native");
+
+      const currentUrl = document.getElementById("current-url");
+
       const status = document.getElementById("status");
+
       const frameWrap = document.getElementById("frame-wrap");
-      const currentUrlDisplay = document.getElementById("current-url");
+
+
 
       function normalizeUrl(value) {
-        let trimmed = value.trim();
-        if (!/^https?:\/\//i.test(trimmed)) trimmed = "https://" + trimmed;
-        return trimmed;
+
+        const trimmed = String(value || "").trim();
+
+        if (!trimmed) return "https://example.com";
+
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+        return `https://${trimmed}`;
+
       }
 
-      function setFrame(targetUrl) {
-        currentUrlDisplay.textContent = targetUrl;
-        status.textContent = "Loading...";
+
+
+      function setStatus(message) {
+
+        status.textContent = message;
+
+      }
+
+
+
+      function setFrame(url) {
+
+        currentUrl.textContent = url;
+
         frameWrap.innerHTML = "";
-        
+
         const iframe = document.createElement("iframe");
-        // IMPORTANT: We use encodeURIComponent so the target URL is treated as one single string
-        const proxyUrl = "https://embedstuff.cxmplate.workers.dev/?url=" + encodeURIComponent(targetUrl);
-        
-        iframe.src = proxyUrl;
-        iframe.onload = () => status.textContent = "Loaded";
+
+        iframe.src = "https://embedstuff.cxmplate.workers.dev/?url=https://"url;
+
+        iframe.referrerPolicy = "no-referrer-when-downgrade";
+
+        iframe.addEventListener("load", () => {
+
+          setStatus("Embed loaded if the site allows framing.");
+
+        });
+
+        iframe.addEventListener("error", () => {
+
+          setStatus("This site likely blocks embedding. Open it in a tab instead.");
+
+        });
+
         frameWrap.appendChild(iframe);
+
       }
 
-      document.getElementById("controls").onsubmit = (e) => {
-        e.preventDefault();
-        setFrame(normalizeUrl(urlInput.value));
-      };
 
-      document.getElementById("open-native").onclick = () => {
-        window.open(normalizeUrl(urlInput.value), "_blank");
-      };
+
+      form.addEventListener("submit", (event) => {
+
+        event.preventDefault();
+
+        const url = normalizeUrl(urlInput.value);
+
+        setStatus("Trying embed...");
+
+        setFrame(url);
+
+      });
+
+
+
+      openNativeButton.addEventListener("click", () => {
+
+        const url = normalizeUrl(urlInput.value);
+
+        window.open(url, "_blank", "noopener,noreferrer");
+
+        setStatus("Opened in a real browser tab.");
+
+      });
+
     </script>
+
   </body>
+
 </html>
